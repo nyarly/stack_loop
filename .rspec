@@ -1,0 +1,9 @@
+-I .
+--require simplecov
+--colour
+--require fuubar
+--format Fuubar
+--drb
+-I ~/ruby/rspec-config
+-I ./lib
+--pattern spec/**/*.rb

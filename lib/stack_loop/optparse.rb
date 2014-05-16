@@ -15,7 +15,7 @@ module StackLoop
           app.stack_file = stack
         end
 
-        opti.on("-p", "--push-file FILE", "A path to read for new argument sets") do |file|
+        opti.on("-p", "--push-file FILE", "A path to read for new argument sets") do |file| #ok
           app.collect_file = file
         end
 

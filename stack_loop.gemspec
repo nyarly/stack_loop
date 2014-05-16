@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   # !!find lib bin doc spec spec_help -not -regex '.*\.sw.' -type f 2>/dev/null
   spec.files		= %w[
     lib/stack_loop/app.rb
+    lib/stack_loop/optparse.rb
     bin/stack_loop
   ]
 

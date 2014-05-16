@@ -104,7 +104,6 @@ module StackLoop
 
         command_name = abbreviations[command_name]
         command = command_hash.fetch(command_name, command_hash["help"])
-        puts "\n#{__FILE__}:#{__LINE__} => #{command.inspect}"
         command.run
       end
     end
