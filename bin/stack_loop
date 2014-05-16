@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'stack_loop/app'
+require 'stack_loop/optparse'
+
+app = StackLoop::App.new
+
+parser = StackLoop::OptParse.new(app)
+parser.parse(ARGV)
+
+app.run
