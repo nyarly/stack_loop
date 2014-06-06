@@ -15,4 +15,4 @@ what stack_loop was designed for.
 
 But wait! It's built to be agnostic not only of test solutions, but of testing!
 Maybe there's some other repetitive task that this would be useful for. I have
-no idea, and I don't care. Knock yourself out.
+no idea, and I don't care. Knock yourself out. If you do find other uses, let me know!
