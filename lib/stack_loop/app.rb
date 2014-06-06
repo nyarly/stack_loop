@@ -11,17 +11,21 @@ module StackLoop
         @action = action
       end
 
-      def run
-        @action.call
+      def run(arg_array)
+        @action.call(arg_array)
       end
     end
 
     def commands
       [
         Command.new("run"){ run_stack_loop },
+        Command.new("try"){ run_top },
         Command.new("collect"){ push_new; run_stack_loop },
+        Command.new("list"){ read_stack; @stack.reverse_each{|argset| puts "- #{command_line(argset).join(" ")}"} },
         Command.new("pop"){ pop_argset },
-        Command.new("quit"){ raise "Quitting!" },
+        Command.new("push"){|args| push_argset(args)},
+        Command.new("edit"){ edit_stack },
+        Command.new("quit"){ throw :quit },
         Command.new("help"){ puts "Don't know that one - try: #{command_names.join(", ")}" }
       ]
     end
@@ -86,6 +90,17 @@ module StackLoop
       @stack.length
     end
 
+    def edit_stack
+      write_stack
+      execute_editor_command(stack_file)
+      read_stack
+    end
+
+    def execute_editor_command(path)
+      editor = ENV["EDITOR"] || "vim"
+      system(editor, path)
+    end
+
     def run
       validate_options!
 
@@ -95,16 +110,19 @@ module StackLoop
 
       abbreviations = Abbrev.abbrev(command_names)
 
-      loop do
-        prompt
-        command_name = $stdin.gets.chomp
-        if command_name.empty?
-          command_name = "run"
-        end
+      catch :quit do
+        loop do
+          prompt
+          command_line = $stdin.gets.chomp.split(/\s+/)
+          command_name = command_line.shift
+          if command_name.nil?
+            command_name = "run"
+          end
 
-        command_name = abbreviations[command_name]
-        command = command_hash.fetch(command_name, command_hash["help"])
-        command.run
+          command_name = abbreviations[command_name]
+          command = command_hash.fetch(command_name, command_hash["help"])
+          command.run(command_line)
+        end
       end
     end
 
@@ -113,9 +131,11 @@ module StackLoop
     end
 
     def current_command_line
-      args = get_argset
+      command_line(get_argset)
+    end
 
-      command_list + get_argset
+    def command_line(argset)
+      command_list + argset
     end
 
     def prompt
@@ -135,22 +155,29 @@ module StackLoop
     def run_stack_loop
       while run_stack
         puts
-        puts "Success - running again..."
+        puts "Success running next..."
         puts
       end
+
+      run_top if @stack.empty?
     end
 
     def run_stack
-      success = system(*current_command_line)
+      return false if @stack.empty?
+
+      success = run_top
 
       if success.nil?
         raise "#{[command, *args].inspect} couldn't be run"
       end
       pop_argset if success
 
-      return false if @stack.empty?
-
       return success
+    end
+
+    def run_top
+      puts current_command_line.join(" ")
+      system(*current_command_line)
     end
   end
 end

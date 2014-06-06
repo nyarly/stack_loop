@@ -1,0 +1,3 @@
+Filter argument (run the stack through this every read)
+Filter programs
+Pull stack parsing out for use elsewhere
